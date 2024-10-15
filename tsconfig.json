@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "ES6", // Compila para ES6
+        "module": "commonjs", // Usa módulos CommonJS (padrão do Node.js)
+        "outDir": "./dist", // Diretório de saída para o código compilado
+        "rootDir": "./src", // Diretório dos arquivos TypeScript
+        "strict": true, // Habilita verificações rigorosas
+        "esModuleInterop": true, // Permite interoperabilidade com módulos ES6
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    },
+    "include": [
+        "src/**/*"
+    ], // Inclui todos os arquivos .ts na pasta src
+    "exclude": [
+        "node_modules"
+    ]
+}

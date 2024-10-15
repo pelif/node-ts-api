@@ -1,0 +1,38 @@
+{
+  "name": "ts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "nodemon",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/sequelize": "^4.28.20",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.0",
+    "mysql2": "^3.11.3",
+    "reflect-metadata": "^0.2.2",
+    "sequelize": "^6.37.4",
+    "sequelize-typescript": "^2.1.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.8",
+    "@babel/preset-env": "^7.25.8",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.4",
+    "@types/validator": "^13.12.2",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.7",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "resolutions": {
+    "@babel/core": "^7.12.10"
+  }
+}
