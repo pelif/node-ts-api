@@ -1,7 +1,8 @@
 import path from "path";
-import express, {Request, Response} from "express";
+import express from "express";
 import bodyParser from "body-parser";
-import Api from "./routes/home";
+import ProductEndpoints from "./routes/product";
+import CategoryEndpoints from "./routes/category";
 import connectDb from "./models";
 
 const app = express();
@@ -13,7 +14,8 @@ connectDb().then(() => {
     console.log('Conectado ao banco de dados');   
 })
 
-app.use('/', Api); 
+app.use('/products', ProductEndpoints); 
+app.use('/categories', CategoryEndpoints); 
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

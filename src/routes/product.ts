@@ -1,21 +1,17 @@
 import express, {Request, Response} from "express";
-import Product from "../models/product.model";
+import Product, { ProductAttributes } from "../models/product.model";
+import Category from "../models/category.model";
 
 const router = express.Router();
 
-router.get("/", (req: Request, res: Response) => {
-    res.json(["Hello, This is my first endpoint!"]);
-});
 
+router.get("/", async (req: Request, res: Response) => {
 
-router.get("/products", async (req: Request, res: Response) => {
-
-    try {
+    try {       
         const products = await Product.findAll();
-        res.json({products});
+        res.json({products: products});
     } catch(error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message);
+        if (error instanceof Error) {            
             res.status(500).json({ 
               error: error.message,
               message: "Erro ao listar os produtos!" 
@@ -31,13 +27,49 @@ router.get("/products", async (req: Request, res: Response) => {
   
 });
 
-router.post("/product", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
+    try {
+
+        const { id } = req.params;
+        const product = await Product.findOne({ where: { id } });
+
+        if(!product) {
+            res.status(404).json({ 
+                error: "Produto não encontrado",
+                message: "Erro ao buscar o produto!" 
+            });
+        } else {
+            res.status(200)
+               .json({ 
+                    product: product,
+                    message: "Produto encontrado com sucesso!"
+                });
+        }
+        
+    } catch(error: unknown) {
+        if (error instanceof Error) {            
+            res.status(500).json({ 
+              error: error.message,
+              message: "Erro ao buscar o produto!" 
+            });
+        } else {
+            console.log("Erro desconhecido");
+            res.status(500).json({
+              error: "Erro desconhecido",
+              message: "Erro ao buscar o produto!"
+            });
+        }        
+    } 
+
+});
+
+router.post("/", async (req: Request, res: Response) => {
       
     try {
 
-        const { id, name, price } = req.body;
-        const product = await Product.create({ id, name, price });
-
+        const { id, name, price, categoryId } = req.body;
+        console.log(req.body);
+        const product = await Product.create({ id, name, price, categoryId } as ProductAttributes);
         res.status(201)
            .json({ 
             product: product,
@@ -45,10 +77,10 @@ router.post("/product", async (req: Request, res: Response) => {
          });
 
     } catch(error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message);
+        if (error instanceof Error) {            
             res.status(500).json({ 
               error: error.message,
+              stack: error.stack,              
               message: "Erro ao criar o produto!" 
             });
         } else {
@@ -61,10 +93,10 @@ router.post("/product", async (req: Request, res: Response) => {
       }
 });
 
-router.put("/product", async (req: Request, res: Response) => {
+router.put("/", async (req: Request, res: Response) => {
     try {
-        const { id, name, price } = req.body;
-        const product = await Product.update({ name, price }, { where: { id } });
+        const { id, name, price, categoryId } = req.body;
+        const product = await Product.update({ name, price, categoryId }, { where: { id } });
 
         res.status(200)
            .json({ 
@@ -73,8 +105,7 @@ router.put("/product", async (req: Request, res: Response) => {
          });
 
     } catch(error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message);
+        if (error instanceof Error) {            
             res.status(500).json({ 
               error: error.message,
               message: "Erro ao atualizar o produto!" 
@@ -90,7 +121,7 @@ router.put("/product", async (req: Request, res: Response) => {
 
 }); 
 
-router.delete("/product/:id", async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const product = await Product.destroy({ where: { id } });
