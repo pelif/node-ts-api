@@ -1,14 +1,14 @@
 import express, {Request, Response} from "express";
 import Product, { ProductAttributes } from "../models/product.model";
-import Category from "../models/category.model";
+import ProductRepository from "../repositories/product.repository";
 
 const router = express.Router();
-
+const productRepository = new ProductRepository();
 
 router.get("/", async (req: Request, res: Response) => {
 
     try {       
-        const products = await Product.findAll();
+        const products = await productRepository.findAll();
         res.json({products: products});
     } catch(error: unknown) {
         if (error instanceof Error) {            
@@ -31,7 +31,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     try {
 
         const { id } = req.params;
-        const product = await Product.findOne({ where: { id } });
+        const product = await productRepository.findById(id);
 
         if(!product) {
             res.status(404).json({ 
@@ -67,9 +67,9 @@ router.post("/", async (req: Request, res: Response) => {
       
     try {
 
-        const { id, name, price, categoryId } = req.body;
-        console.log(req.body);
-        const product = await Product.create({ id, name, price, categoryId } as ProductAttributes);
+        const { id, name, price, categoryId } = req.body;                
+        const product = await productRepository.create({ id, name, price, categoryId } as Product);
+
         res.status(201)
            .json({ 
             product: product,
@@ -95,12 +95,23 @@ router.post("/", async (req: Request, res: Response) => {
 
 router.put("/", async (req: Request, res: Response) => {
     try {
-        const { id, name, price, categoryId } = req.body;
-        const product = await Product.update({ name, price, categoryId }, { where: { id } });
+
+        const { id, name, price, categoryId } = req.body;        
+        const product = await productRepository.update(id, { name, price, categoryId } as Product);        
+        let productUpdated;
+
+        if(product) {
+            productUpdated = await productRepository.findById(id);
+        } else {
+            res.status(404).json({ 
+                error: "Produto não encontrado",
+                message: "Erro ao atualizar o produto!" 
+            });
+        }        
 
         res.status(200)
            .json({ 
-            product: product,
+            product: productUpdated,
             message: "Produto atualizado com sucesso!"
          });
 
@@ -124,7 +135,8 @@ router.put("/", async (req: Request, res: Response) => {
 router.delete("/:id", async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const product = await Product.destroy({ where: { id } });
+        const productDeleted = await productRepository.findById(id);
+        const product = await productRepository.delete(id);
 
         if(!product) {
             res.status(404).json({ 
@@ -134,7 +146,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
         } else {
             res.status(200)
                .json({ 
-                    product: product,
+                    product: productDeleted,
                     message: "Produto excluído com sucesso!"
                 });
         }
