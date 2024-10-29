@@ -8,11 +8,18 @@ import connectDb from "./models";
 const app = express();
 const port = 3005; 
 
+
+
 app.use(express.json());
 
 connectDb().then(() => { 
     console.log('Conectado ao banco de dados');   
 })
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+});
 
 app.use('/products', ProductEndpoints); 
 app.use('/categories', CategoryEndpoints); 
