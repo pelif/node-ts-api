@@ -38,6 +38,6 @@ export default class Product extends Model<ProductAttributes, ProductCreationAtt
     @Column
     declare categoryId: string;
 
-    // @BelongsTo(() => Category)
-    // declare category: Category;
+    @BelongsTo(() => Category)
+    declare category: Category;
 }   

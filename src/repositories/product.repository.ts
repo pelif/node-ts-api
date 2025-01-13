@@ -1,3 +1,4 @@
+import Category from "../models/category.model";
 import Product from "../models/product.model";
 
 export default class ProductRepository { 
@@ -19,7 +20,14 @@ export default class ProductRepository {
     }
 
     async findAll(): Promise<Product[]> {
-        return await Product.findAll();
+        return await Product.findAll({
+            include: [
+                {
+                    model: Category,
+                    as: "category"
+                }
+            ]
+        });
     }
 
 }
